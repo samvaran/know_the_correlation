@@ -1,13 +1,20 @@
+// Samvaran Sharma 
+// Feb 10, 2016
+
+// Get true R value
 function trueR() {
+	// Grab the size of the graph (2nd rect object)
 	var rect = document.getElementsByTagName("rect")[1];
 	var width = parseInt(rect.getAttribute("width"));
 	var height = parseInt(rect.getAttribute("height"));
 
+	// All points in the graph are class "nv-point"
 	var points = document.getElementsByClassName("nv-point");
 	var x, y;
 	var xs = [];
 	var ys = [];
 
+	// Iterate through and use a regex to get the x and y coors
 	for (i=0; i<points.length; i++) {
 		x = points[i].getAttribute("transform").split(",")[0];
 		x = /(?:\d*\.)?\d+/.exec(x);
@@ -21,9 +28,11 @@ function trueR() {
 		ys.push(y);
 	}
 
+	// Calculate R value
 	return linReg(xs,ys);
 }
 
+// Formula to calculate R value from x and y coordinates
 function linReg(x,y) {
 	var n = y.length;
 	var sum_x = 0;
@@ -46,12 +55,18 @@ function linReg(x,y) {
 	return r;
 }
 
+// Since it would look suspicious if you got every answer exactly right...
+// This function will tell you how "wrong" to be! (and still do well)
 function humanTouch(r) {
+	// Central limit theorem takes the hard work out of approximating normal distributions
 	var random = (Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) / 6;
 	random = random * 0.3;
 	random = random - 0.15;
 
+	// random = some random error from the true R value; offset with a normal distribution
 	var guess = r + random;
+
+	// Make sure the guess makes sense
 	if (guess < 0) {
 		return 0;
 	} else if (guess > 1) {
@@ -61,6 +76,7 @@ function humanTouch(r) {
 	}
 }
 
+// Simple function to get the guess
 function guessR() {
 	return humanTouch(trueR());
 }
